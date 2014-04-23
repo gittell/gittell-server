@@ -14,3 +14,7 @@ node_modules
 npm-debug.log
 
 .npmignore
+
+Procfile.debug
+
+.env
