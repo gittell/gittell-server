@@ -20,6 +20,7 @@ app.get "/oauth2/authorize", (req, res) ->
   return res.send(error: "Redirect URI mismatch", 400) unless clientConfig.redirectUri == redirectUri
   return res.send(error: "Only supports response_type='token'", 400) unless responseType == "token"
   if req.session.authUserId
+    console.log "Auth User ID: ", req.session.authUserId
     authUserId = req.session.authUserId
     db.AccessToken.find
       where:
@@ -45,15 +46,19 @@ app.get "/oauth2/authorize", (req, res) ->
 ###
 # Revoke issued OAuth token
 ###
-app.get "/oauth2/revoke", (req, res, error) ->
-  token = req.param('token')
-  db.AccessToken.find(token)
-    .then (accessToken) ->
-      accessToken.remove() if accessToken
-    .then () ->
-      res.send { "message": "revoked successfully" }
-    .catch (err) ->
-      res.send { "error": err.message }, 503
+do (
+  fn = (req, res) ->
+    token = req.param('token')
+    db.AccessToken.find(token)
+      .then (accessToken) ->
+        accessToken.remove() if accessToken
+      .then () ->
+        res.send { "message": "revoked successfully" }
+      .catch (err) ->
+        res.send { "error": err.message }, 503
+) ->
+  app.get "/oauth2/revoke", fn
+  app.post "/oauth2/revoke", fn
 
 ###
 # User Login (redirect to github auth page)
