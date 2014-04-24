@@ -59,7 +59,9 @@ app.get "/auth/login", (req, res) ->
     redirect_uri: clientConfig.redirectUri
     state: state
     scope: "user"
-  req.session.save (err) -> res.redirect authzUrl
+  req.session.save (err) ->
+    console.log "redirecting to: ", authzUrl
+    res.redirect authzUrl
 
 ###
 # Github OAuth callback
