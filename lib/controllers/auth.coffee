@@ -43,6 +43,19 @@ app.get "/oauth2/authorize", (req, res) ->
     res.redirect "/auth/login?return=" + encodeURIComponent(parsed.path)
 
 ###
+# Revoke issued OAuth token
+###
+app.get "/oauth2/revoke", (req, res, error) ->
+  token = req.param('token')
+  db.AccessToken.find(token)
+    .then (accessToken) ->
+      accessToken.remove() if accessToken
+    .then () ->
+      res.send { "message": "revoked successfully" }
+    .catch (err) ->
+      res.send { "error": err.message }, 503
+
+###
 # User Login (redirect to github auth page)
 ###
 app.get "/auth/login", (req, res) ->
@@ -62,6 +75,13 @@ app.get "/auth/login", (req, res) ->
   req.session.save (err) ->
     console.log "redirecting to: ", authzUrl
     res.redirect authzUrl
+
+###
+# User Session Logout
+###
+app.get "/auth/logout", (req, res) ->
+  req.session.authUserId = null
+  req.session.save (err) -> res.redirect "/"
 
 ###
 # Github OAuth callback
