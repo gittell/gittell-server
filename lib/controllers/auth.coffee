@@ -85,8 +85,7 @@ app.get "/auth/login", (req, res) ->
 # User Session Logout
 ###
 app.get "/auth/logout", (req, res) ->
-  req.session.authUserId = null
-  req.session.save (err) -> res.redirect "/"
+  req.session.destroy (err) -> res.redirect "/"
 
 ###
 # Github OAuth callback
