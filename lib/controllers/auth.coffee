@@ -11,17 +11,23 @@ config = require "../config"
 # OAuth authorization
 ###
 app.get "/oauth2/authorize", (req, res) ->
-  responseType = req.param("response_type")
-  clientId = req.param("client_id")
-  redirectUri = req.param("redirect_uri")
-  state = req.param("state")
+  relay = req.param('relay')
+  if relay
+    relayState = req.session["relay_#{relay}"]
+    { responseType, clientId, redirectUri, state } = relayState if relayState
+  else
+    responseType = req.param("response_type")
+    clientId = req.param("client_id")
+    redirectUri = req.param("redirect_uri")
+    state = req.param("state")
   clientConfig = config.oauth2[clientId]
   return res.send(error: "No client registered for #{clientId}", 400) unless clientConfig 
   return res.send(error: "Redirect URI mismatch", 400) unless clientConfig.redirectUri == redirectUri
   return res.send(error: "Only supports response_type='token'", 400) unless responseType == "token"
-  if req.session.authUserId
-    console.log "Auth User ID: ", req.session.authUserId
+  reauthorize = req.param("reauthorize") == "true"
+  if !reauthorize && req.session.authUserId
     authUserId = req.session.authUserId
+    console.log "Auth User ID: ", authUserId
     db.AccessToken.find
       where:
         clientId: clientId
@@ -40,8 +46,16 @@ app.get "/oauth2/authorize", (req, res) ->
     , (err) ->
       res.send(error: err, 500)
   else
-    parsed = url.parse req.url
-    res.redirect "/auth/login?return=" + encodeURIComponent(parsed.path)
+    relay = crypto.randomBytes(48).toString('hex')
+    relayState =
+      responseType: responseType
+      clientId: clientId
+      redirectUri: redirectUri
+      state: state
+    req.session["relay_" + relay] = relayState
+    req.session.save (err) ->
+      path = "/oauth2/authorize?relay=#{relay}"
+      res.redirect "/auth/login?return=" + encodeURIComponent(path)
 
 ###
 # Revoke issued OAuth token
