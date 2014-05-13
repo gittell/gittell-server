@@ -10,4 +10,4 @@ module.exports =
   oauth2:
     chromeExtension:
       clientId: "chromeExtension"
-      redirectUri: "https://eicfidcpmgfjkeeinjfiiackodgdddhl.chromiumapp.org/provider_cb"
+      redirectUri: "https://#{process.env.CHROME_EXTENSION_ID}.chromiumapp.org/provider_cb"
