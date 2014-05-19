@@ -13,5 +13,8 @@
     "pg": "^3.0.3",
     "request": "^2.34.0",
     "async": "^0.7.0"
+  },
+  "devDependencies": {
+    "commander": "^2.2.0"
   }
 }
