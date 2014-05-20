@@ -22,24 +22,23 @@ module.exports = (grunt) ->
         tasks: [ 'build:<%= target %>' ]
 
     copy:
-      web:
+      client:
         files: [
           expand: true
           cwd: '<%= clientProjectRoot %>/build/<%= target %>'
           src: [ '**/*' ],
-          dest: '<%= publicDir %>'
+          dest: '<%= publicDir %>/client'
         ]
 
     clean:
-      web:
-        src: [ "<%= publicDir %>/**/*" ]
+      client:
+        src: [ "<%= publicDir %>/client" ]
 
   grunt.registerTask 'target:develop', -> grunt.config('target', 'develop')
   grunt.registerTask 'target:staging', -> grunt.config('target', 'staging')
   grunt.registerTask 'target:production', -> grunt.config('target', 'production')
-
-  grunt.registerTask 'build:develop', [ 'target:develop', 'grunt', 'copy' ]
-  grunt.registerTask 'build:staging', [ 'target:staging', 'grunt', 'copy' ]
-  grunt.registerTask 'build:production', [ 'target:production', 'grunt', 'copy' ]
+  grunt.registerTask 'build:develop', [ 'clean', 'target:develop', 'grunt', 'copy' ]
+  grunt.registerTask 'build:staging', [ 'clean', 'target:staging', 'grunt', 'copy' ]
+  grunt.registerTask 'build:production', [ 'clean', 'target:production', 'grunt', 'copy' ]
   grunt.registerTask 'default', [ 'build:develop' ]
 
