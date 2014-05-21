@@ -4,5 +4,4 @@ node_js:
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
 env:
-  - DB=postgres
   - DATABASE_URL=postgres://postgres:password@localhost/travis_ci_test
