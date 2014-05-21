@@ -1,5 +1,6 @@
 request = require "supertest"
 assert = require "power-assert"
+_ = require "underscore"
 
 app = require "../lib/app"
 testUtil = require "./util"
@@ -42,6 +43,14 @@ describe "site", ->
       .set "Authorization", "Bearer #{testUtil.accessToken}"
       .end (err, res) ->
         return done(err) if err
-        assert.ok res.status == 210
+        assert.ok res.statusCode == 200
+        assert.ok _.isArray(res.body) && res.body.length > 0
+        for site in res.body
+          assert.ok _.isNumber(site.id)
+          assert.ok _.isString(site.url)
+          assert.ok _.isString(site.title)
+          assert.ok _.isString(site.iconUrl)
+          assert.ok _.isObject(site.manifest)
+          assert.ok _.isObject(site.manifest.condition)
         done()
 
