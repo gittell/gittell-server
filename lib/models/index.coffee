@@ -3,6 +3,7 @@ Sequelize = require "sequelize"
 sequelize = new Sequelize process.env.DATABASE_URL || 'postgres://localhost/database',
   protocol: "postgres"
   native: true
+  logging: false
 
 db = module.exports =
   Sequelize: Sequelize

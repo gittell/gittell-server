@@ -37,7 +37,7 @@ describe "activity", ->
   ###
   #
   ###
-  it "should get activity summary of the logged in user", (done) ->
+  it "should get activity summary for given date of logged in user", (done) ->
 
     agent.get("/api/user/me/activity/summary?date=20140521")
       .set "Authorization", "Bearer #{testUtil.accessToken}"
@@ -49,6 +49,26 @@ describe "activity", ->
         for activity in activities
           assert.ok _.isObject(activity)
           assert.ok _.isString(activity.url)
+          assert.ok activity.date == "20140521"
+          assert.ok _.isNumber(activity.totalDuration)
+        done()
+
+  ###
+  #
+  ###
+  it "should get activity summary during given month of logged in user", (done) ->
+
+    agent.get("/api/user/me/activity/summary?month=201405")
+      .set "Authorization", "Bearer #{testUtil.accessToken}"
+      .end (err, res) ->
+        return done(err) if err
+        assert.ok res.statusCode == 200
+        activities = res.body
+        assert.ok _.isArray(activities)
+        for activity in activities
+          assert.ok _.isObject(activity)
+          assert.ok _.isString(activity.url)
+          assert.ok activity.date >= "20140501" && activity.date <= "20140531"
           assert.ok _.isNumber(activity.totalDuration)
         done()
 
