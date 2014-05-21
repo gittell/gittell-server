@@ -8,7 +8,15 @@ db = require "../models"
 app.get "/api/user/:userId/activity/summary", (req, res, error) ->
   condition =
     userId: req.param('userId')
-    date: req.param('date') || ""
+  date = req.param('date')
+  month = req.param('month')
+  if date && /^\d{8}$/.test(date)
+    condition.date = req.param('date')
+  else if month && /^\d{6}$/.test(month)
+    condition.date =
+      between: [ month + "00", month + "99" ]
+  else
+    return error(new Error("INVALID_PARAMETER"))
   condition.userId = req.user.id if condition.userId == "me"
   db.Activity.groupBy("url", condition)
     .then (summaries) ->
@@ -23,7 +31,6 @@ app.post "/api/activity", (req, res, error) ->
   activity.userId = req.user.id
   db.Activity.create activity
     .then (activity) ->
-      console.log activity.values
       res.send(activity.values)
     .catch error
 

@@ -33,7 +33,7 @@ Activity = module.exports = sequelize.define "Activity",
           [ sequelize.fn("max", sequelize.col("id")), "id" ]
           [ sequelize.fn("sum", sequelize.col("duration")), "totalDuration" ]
         ]
-        group: [ groupProp ]
+        group: [ groupProp, "date" ]
       .then (summaries) ->
         ids = summaries.map (s) -> s.values.id
         Activity.findAll
@@ -52,6 +52,7 @@ Activity = module.exports = sequelize.define "Activity",
             summary.title = activity.title
             summary.projectUrl = activity.projectUrl
             summary.projectTitle = activity.projectTitle
+            summary.date = activity.date
             summary.totalDuration = Number(summary.totalDuration)
             delete summary.id
             summary
