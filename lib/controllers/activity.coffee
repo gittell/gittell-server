@@ -37,7 +37,7 @@ app.post "/api/activity/:activityId/duration", (req, res, error) ->
     .then (activity) ->
       throw new Error("NOT_FOUND") unless activity
       throw new Error("ACCESS_NOT_ALLOWED") if activity.userId != req.user.id
-      activity.increment "duration", inc
+      activity.increment "duration", { by: inc }
     .then (activity) ->
       res.send activity.values
     .catch error
