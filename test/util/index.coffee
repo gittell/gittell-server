@@ -6,7 +6,7 @@ module.exports =
   accessToken: null
 
   setup: ->
-    Q(true)
+    db.sequelize.sync()
 
   loginAs: (id) ->
     db.AccessToken.find 
