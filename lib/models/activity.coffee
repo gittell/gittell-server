@@ -23,7 +23,40 @@ Activity = module.exports = sequelize.define "Activity",
     type: Sequelize.STRING
     validate:
       is: /^\d{8}$/
+,
+  classMethods:
+    groupBy: (groupProp, condition) ->
+      Activity.findAll
+        where: condition
+        attributes: [
+          groupProp
+          [ sequelize.fn("max", sequelize.col("id")), "id" ]
+          [ sequelize.fn("sum", sequelize.col("duration")), "totalDuration" ]
+        ]
+        group: [ groupProp ]
+      .then (summaries) ->
+        ids = summaries.map (s) -> s.values.id
+        Activity.findAll
+          where:
+            id: ids
+          include: [ Site ]
+        .then (activities) ->
+          activities = activities.reduce (o, a) ->
+            o[a.id] = a
+            o
+          , {}
+          summaries.map (s) ->
+            summary = s.values
+            activity = activities[summary.id]
+            summary.site = activity.site
+            summary.title = activity.title
+            summary.projectUrl = activity.projectUrl
+            summary.projectTitle = activity.projectTitle
+            summary.totalDuration = Number(summary.totalDuration)
+            delete summary.id
+            summary
 
 Activity.belongsTo(User, { foreignKey: "userId" })
 Activity.belongsTo(Site, { foreignKey: "siteId" })
+
 

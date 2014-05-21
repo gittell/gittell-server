@@ -6,42 +6,14 @@ db = require "../models"
 # Show activity summary of user
 ###
 app.get "/api/user/:userId/activity/summary", (req, res, error) ->
-  query =
+  condition =
     userId: req.param('userId')
     date: req.param('date') || ""
-  query.userId = req.user.id if query.userId == "me"
-  db.Activity.findAll
-    where: query
-    attributes: [
-      "url"
-      [ db.sequelize.fn("max", db.sequelize.col("id")), "id" ]
-      [ db.sequelize.fn("sum", db.sequelize.col("duration")), "totalDuration" ]
-    ]
-    group: [ "url" ]
-  .then (summaries) ->
-    ids = summaries.map (s) -> s.values.id
-    db.Activity.findAll
-      where:
-        id: ids
-      include: [ db.Site ]
-    .then (activities) ->
-      activities = activities.reduce (o, a) ->
-        o[a.id] = a
-        o
-      , {}
-      summaries.map (s) ->
-        summary = s.values
-        activity = activities[summary.id]
-        summary.site = activity.site
-        summary.title = activity.title
-        summary.projectUrl = activity.projectUrl
-        summary.projectTitle = activity.projectTitle
-        summary.totalDuration = Number(summary.totalDuration)
-        delete summary.id
-        summary
-  .then (summaries) ->
-    res.send summaries
-  .catch error
+  condition.userId = req.user.id if condition.userId == "me"
+  db.Activity.groupBy("url", condition)
+    .then (summaries) ->
+      res.send summaries
+    .catch error
 
 ###
 # Create new activity
