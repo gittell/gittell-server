@@ -6,6 +6,5 @@ require "./site"
 require "./activity"
 require "./error"
 
-app.get "/", (req, res) ->
-  res.send "<body></body>"
+require "./web"
 

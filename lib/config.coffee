@@ -11,3 +11,6 @@ module.exports =
     chromeExtension:
       clientId: "chromeExtension"
       redirectUri: "https://#{process.env.CHROME_EXTENSION_ID}.chromiumapp.org/provider_cb"
+
+  gittell:
+    clientAssetBaseUrl: "#{process.env.GITTELL_CLIENT_ASSET_BASE_URL}"
