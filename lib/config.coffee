@@ -11,6 +11,9 @@ module.exports =
     chromeExtension:
       clientId: "chromeExtension"
       redirectUri: "https://#{process.env.CHROME_EXTENSION_ID}.chromiumapp.org/provider_cb"
+    web:
+      clientId: "web"
+      redirectUri: "http://localhost:5000/callback.html"
 
   gittell:
     clientAssetBaseUrl: "#{process.env.GITTELL_CLIENT_ASSET_BASE_URL}"

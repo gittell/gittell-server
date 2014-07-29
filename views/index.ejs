@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app.main" ng-csp>
 <head>
 <link rel="stylesheet" href="<%= baseUrl %>/assets/vendor/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="<%= baseUrl %>/assets/vendor/font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="<%= baseUrl %>/assets/vendor/angular/angular-csp.css">
-<link rel="stylesheet" href="<%= baseUrl %>/css/popup.css">
+<link rel="stylesheet" href="<%= baseUrl %>/css/main.css">
 <script src="<%= baseUrl %>/assets/vendor/angular/angular.min.js"></script>
 <script src="<%= baseUrl %>/assets/vendor/angular-bootstrap/ui-bootstrap.min.js"></script>
 <script src="<%= baseUrl %>/assets/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script src="<%= baseUrl %>/js/main.js"></script>
 </head>
-<body id="root" ng-app="app.popup" ng-csp ng-controller="LoginController">
+<body id="root" ng-controller="LoginController">
   <div ng-include="'<%= baseUrl %>/templates/header.html'"></div>
   <div ng-show="isLoggedIn" ng-include="'<%= baseUrl %>/templates/activities.html'"></div>
   <div id="login-prompt" ng-show="!isLoggedIn">
