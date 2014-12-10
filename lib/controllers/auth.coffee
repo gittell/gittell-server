@@ -11,6 +11,7 @@ config = require "../config"
 # OAuth authorization
 ###
 app.get "/oauth2/authorize", (req, res) ->
+  console.log "/oauth2/authorize"
   relay = req.param('relay')
   if relay
     relayState = req.session["relay_#{relay}"]
@@ -78,6 +79,7 @@ do (
 # User Login (redirect to github auth page)
 ###
 app.get "/auth/login", (req, res) ->
+  console.log "/auth/login"
   providerName = "github"
   rand = crypto.randomBytes(48).toString('hex')
   returnTo = req.param("return")
@@ -105,6 +107,7 @@ app.get "/auth/logout", (req, res) ->
 # Github OAuth callback
 ###
 app.get "/auth/github/callback", (req, res) ->
+  console.log "/auth/github/callback"
   code = req.param("code")
   state = req.param("state")
   return res.send(error: "No authorization code passed to parameter", 400) unless code
